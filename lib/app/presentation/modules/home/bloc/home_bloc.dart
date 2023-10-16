@@ -5,13 +5,18 @@ import 'package:functional_programming/app/domain/repositories/exchange_reposito
 import 'package:functional_programming/app/domain/repositories/ws_repository.dart';
 import 'package:functional_programming/app/presentation/modules/home/bloc/home_state.dart';
 
+import '../../../../domain/models/ws_status/ws_status.dart';
+
+
 
 class HomeBloc extends ChangeNotifier {
+
+
   HomeBloc({required this.wsRepository, required this.exchangerepository});
 
   final ExchangeRepository exchangerepository;
   final WsRepository wsRepository;
-  StreamSubscription? _subscription;
+  StreamSubscription? _pricesSubscription, _wsSubscription;
 
   HomeState _state = HomeState.loading();
 
@@ -62,8 +67,9 @@ class HomeBloc extends ChangeNotifier {
   }
 
   void _onPricesChanged() {
-    _subscription?.cancel();
-    _subscription = wsRepository.onPricesChanged.listen((changes) {
+    _pricesSubscription?.cancel();
+    _wsSubscription?.cancel();
+    _pricesSubscription = wsRepository.onPricesChanged.listen((changes) {
       state.mapOrNull(
         loaded: (state) {
           final keys = changes.keys;
@@ -84,11 +90,22 @@ class HomeBloc extends ChangeNotifier {
         },
       );
     });
+    _wsSubscription = wsRepository.onStatusChanged.listen((status) {
+          state.mapOrNull(
+            loaded: (state) {
+              _state = state.copyWith(
+                  wsStatus: status,
+              );
+              notifyListeners();
+            },
+          );
+        });
   }
 
   @override
   void dispose() {
-    _subscription?.cancel();
+    _pricesSubscription?.cancel();
+    _wsSubscription?.cancel();
     super.dispose();
   }
 }

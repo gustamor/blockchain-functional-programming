@@ -2,6 +2,7 @@ import "package:freezed_annotation/freezed_annotation.dart";
 import "package:functional_programming/app/domain/failures/http_request_failure.dart";
 
 import "../../../../domain/models/crypto/crypto.dart";
+import "../../../../domain/models/ws_status/ws_status.dart";
 
 part 'home_state.freezed.dart';
 
@@ -16,11 +17,5 @@ class HomeState with _$HomeState {
        @Default(WsStatus.connecting()) WsStatus wsStatus}) = _Loaded;
 }
 
-@freezed
-class WsStatus with _$WsStatus {
-  const factory WsStatus.connecting() = _Connecting;
 
-  const factory WsStatus.connected() = _Connected;
 
-  const factory WsStatus.failed() = _WsFailed;
-}
