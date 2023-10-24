@@ -19,6 +19,7 @@ class HomeView extends StatelessWidget {
       builder: (context, _) {
         final HomeBloc bloc = context.watch<HomeBloc>();
         return Scaffold(
+          backgroundColor: const Color(0xfff2f5f8),
           appBar: HomeAppBar(),
           body: bloc.state.map(
             loading: ( _) => const Center(

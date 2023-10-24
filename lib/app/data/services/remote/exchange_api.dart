@@ -25,7 +25,9 @@ class ExchangeAPI {
         final json = jsonDecode(response.body);
         final cryptos = (json['data'] as List).map((e) => Crypto(
             id: e['id'],
+            name: e['name'],
             symbol: e['symbol'],
+          changePercent24Hr: double.parse(e['changePercent24Hr']),
             price: double.parse(
               e['priceUsd'],
             )));

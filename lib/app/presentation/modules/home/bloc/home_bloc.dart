@@ -23,11 +23,13 @@ class HomeBloc extends ChangeNotifier {
 
   final _ids = [
     'bitcoin',
-    'litecoin',
     'ethereum',
+    'tether',
+    'binance-coin,'
     'usd-coin',
     'monero',
-    'tomochain'
+    'litecoin',
+    'tomochain',
   ];
 
   Future<void> init() async {
