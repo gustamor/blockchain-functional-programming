@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:functional_programming/app/presentation/modules/home/view/home_view.dart';
+import 'package:functional_programming/app/presentation/modules/sign_in/sign_in_view.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,7 +12,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomeView(),
+      routes: {
+        '/': (_) => const HomeView(),
+        '/sign-in': (_) => const SignInView(),
+      },
     );
   }
 }

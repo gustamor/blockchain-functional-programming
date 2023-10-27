@@ -27,7 +27,7 @@ class WsRepositoryImpl implements WsRepository {
       _channel = builder(ids);
       await _channel!.ready;
       _subscription = _channel!.stream.listen(
-              (event) {
+          (event) {
             final map = Map<String, String>.from(
               jsonDecode(event),
             );

@@ -12,5 +12,4 @@ class ExChangeRepositoryImpl implements ExchangeRepository {
     return _api.getPrices(ids);
   }
 
-
 }

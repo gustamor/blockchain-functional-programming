@@ -10,17 +10,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     final HomeBloc bloc = context.watch<HomeBloc>();
 
     return AppBar(
+      leading: IconButton(
+        onPressed: () => Navigator.pushReplacementNamed(context, '/sign-in'),
+        icon: const Icon(Icons.login),
+      ),
       title: bloc.state.mapOrNull(
           loaded: (state) => Center(
-            child: Text(state.wsStatus.when(
-                connecting: () => 'connecting',
-                connected: () => 'connected',
-                failed: () => 'failed')),
-          )),
+                child: Text(state.wsStatus.when(
+                    connecting: () => 'connecting',
+                    connected: () => 'connected',
+                    failed: () => 'failed')),
+              )),
     );
   }
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

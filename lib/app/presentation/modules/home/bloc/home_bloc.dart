@@ -8,18 +8,20 @@ import '../../../../domain/models/ws_status/ws_status.dart';
 import '../../../../domain/repositories/exchange_repository.dart';
 import '../../../../domain/repositories/ws_repository.dart';
 
+part 'extensions/ws.dart';
+part 'extensions/update_crypto_prices.dart';
+
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(
     super.initialState, {
-    required this.exchangerepository,
-    required this.wsRepository,
-  }) {
+    required this.exchangeRepository,
+    required WsRepository wsRepository,
+  }) : _wsRepository = wsRepository {
     on<InitializeEvent>(_onInitialize);
     on<UpdateWsStateEvent>(_onUpdatedStatus);
     on<UpdateCryptoPricesEvent>(_onUpdatedCryptoPriceEvent);
-    on<DeleteEvent>((event, emit) {});
+    on<DeleteEvent>(_onDelete);
   }
-
   final _ids = [
     'bitcoin',
     'ethereum',
@@ -31,9 +33,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     'tomochain',
   ];
 
-  final ExchangeRepository exchangerepository;
-  final WsRepository wsRepository;
+  final WsRepository _wsRepository;
+
   StreamSubscription? _pricesSubscription, _wsSubscription;
+
+
+  final ExchangeRepository exchangeRepository;
 
   Future<void> _onInitialize(
     InitializeEvent event,
@@ -46,7 +51,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ),
     );
 
-    final result = await exchangerepository.getPrices(_ids);
+    final result = await exchangeRepository.getPrices(_ids);
 
     emit(
       result.when(
@@ -59,68 +64,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  void _onUpdatedStatus(UpdateWsStateEvent event, Emitter<HomeState> emit) {
-    state.mapOrNull(
-      loaded: (state) {
-        emit(
-          state.copyWith(wsStatus: event.wsStatus),
-        );
-      },
-    );
-  }
-
-  void _onUpdatedCryptoPriceEvent(
-    UpdateCryptoPricesEvent event,
-    Emitter<HomeState> emit,
-  ) {
-    state.mapOrNull(
-      loaded: (state) {
-        final keys = event.prices.keys;
-        emit(
-          state.copyWith(
-            cryptos: [
-              ...state.cryptos.map(
-                (crypto) {
-                  if (keys.contains(crypto.id)) {
-                    return crypto.copyWith(
-                      price: event.prices[crypto.id]!,
-                    );
-                  }
-                  return crypto;
-                },
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<bool> startPricesListening() async {
-    final connected = await wsRepository.connect(_ids);
-
-    add(UpdateWsStateEvent(
-        connected ? const WsStatus.connected() : const WsStatus.failed()));
-
-    await _wsSubscription?.cancel();
-    await _pricesSubscription?.cancel();
-
-    _wsSubscription = wsRepository.onStatusChanged.listen(
-      (status) => add(
-        UpdateWsStateEvent(status),
-      ),
-    );
-    _pricesSubscription = wsRepository.onPricesChanged.listen(
-      (prices) => add(
-        UpdateCryptoPricesEvent(prices),
-      ),
-    );
-
-    return connected;
-  }
-
-  void _onPricesChanged(Emitter<HomeState> emit) {
-    _wsSubscription?.cancel();
+  void _onDelete(DeleteEvent event, Emitter<HomeState> emit) {
+    state.mapOrNull(loaded: (state) {
+      final cryptos = [...state.cryptos];
+      cryptos.removeWhere((element) => element.id == event.crypto.id);
+      emit(state.copyWith(cryptos: cryptos));
+    });
   }
 
   @override

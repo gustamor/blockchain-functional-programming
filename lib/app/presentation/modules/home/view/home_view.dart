@@ -15,7 +15,7 @@ class HomeView extends StatelessWidget {
     return BlocProvider<HomeBloc>(
       create: (_) => HomeBloc(
         HomeState.loading(),
-        exchangerepository: context.read(),
+        exchangeRepository: context.read(),
         wsRepository: context.read(),
       )..add(
           InitializeEvent(),
@@ -25,7 +25,7 @@ class HomeView extends StatelessWidget {
           HomeBloc bloc = context.watch();
           return Scaffold(
             backgroundColor: const Color(0xfff2f5f8),
-            appBar: HomeAppBar(),
+            appBar: const HomeAppBar(),
             body: bloc.state.map(
               loading: (_) => const Center(
                 child: CircularProgressIndicator(),
