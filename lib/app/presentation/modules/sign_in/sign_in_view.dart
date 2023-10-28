@@ -44,7 +44,7 @@ class SignInView extends StatelessWidget {
                 onChanged: (checked) {},
                 title: const Text("Are you ok with the terms?")
               ),
-              ElevatedButton(
+              const ElevatedButton(
                 onPressed: null,
                 child: Text("Log in"),
               )
