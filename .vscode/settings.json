@@ -15,7 +15,8 @@
         "**/*.metadata": true,
         "**/*.gitignore": true,
         "**/*.gitattributes": true
-    }
+    },
+    "files.autoSave": "onFocusChange"
 
 }
 

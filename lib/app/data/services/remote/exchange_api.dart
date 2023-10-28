@@ -4,17 +4,16 @@ import 'dart:io';
 import 'package:functional_programming/app/domain/failures/http_request_failure.dart';
 import 'package:functional_programming/app/domain/models/crypto/crypto.dart';
 import 'package:functional_programming/app/domain/repositories/exchange_repository.dart';
-import 'package:functional_programming/app/domain/results/get_prices/get_prices_result.dart';
 import 'package:http/http.dart';
 
 import '../../../domain/either/either.dart';
 
 class ExchangeAPI {
-   final Client _client;
+  final Client _client;
 
   ExchangeAPI(this._client);
 
-   GetPriceFuture getPrices(List<String> ids) async {
+  GetPriceFuture getPrices(List<String> ids) async {
     try {
       final response = await _client.get(
         Uri.parse(
@@ -27,7 +26,7 @@ class ExchangeAPI {
             id: e['id'],
             name: e['name'],
             symbol: e['symbol'],
-          changePercent24Hr: double.parse(e['changePercent24Hr']),
+            changePercent24Hr: double.parse(e['changePercent24Hr']),
             price: double.parse(
               e['priceUsd'],
             )));
