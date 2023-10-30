@@ -5,7 +5,6 @@ import 'package:functional_programming/app/presentation/modules/home/bloc/home_e
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-
 const colors = <String, Color>{
   'BTC': Colors.orange,
   'ETH': Colors.deepPurple,
@@ -38,10 +37,11 @@ class HomeLoaded extends StatelessWidget {
                   clipBehavior: Clip.hardEdge,
                   child: Dismissible(
                     key: Key(crypto.id),
-                    onDismissed: (_) => context.read<HomeBloc>().add(
-                      DeleteEvent(crypto)
+                    onDismissed: (_) =>
+                        context.read<HomeBloc>().add(DeleteEvent(crypto)),
+                    background: Container(
+                      color: Colors.red,
                     ),
-                    background: Container(color: Colors.red,),
                     child: ListTile(
                         tileColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -64,10 +64,11 @@ class HomeLoaded extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                                NumberFormat.currency(name: r'$')
-                                    .format(crypto.price),
-                                style:
-                                    const TextStyle(fontWeight: FontWeight.bold)),
+                              NumberFormat.currency(name: r'$')
+                                  .format(crypto.price),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
                             Text(
                               '${crypto.changePercent24Hr.toStringAsFixed(2)}%',
                               style: TextStyle(

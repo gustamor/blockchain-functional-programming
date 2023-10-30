@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:functional_programming/app/domain/repositories/auth_repository.dart';
 import 'package:functional_programming/app/presentation/modules/sign_in/bloc/sign_in_bloc.dart';
 import 'package:functional_programming/app/presentation/modules/sign_in/bloc/sign_in_event.dart';
 import 'package:functional_programming/app/presentation/modules/sign_in/bloc/sign_in_state.dart';
@@ -12,10 +13,11 @@ class SignInView extends StatelessWidget {
     return BlocProvider<SignInBloc>(
       create: (_) => SignInBloc(
         SignInState(),
+        sessionBloc: context.read(),
+        authRepository: context.read(),
       ),
       child: Builder(builder: (context) {
         final SignInBloc bloc = context.read();
-
         return Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -61,17 +63,21 @@ class SignInView extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
-                  BlocBuilder<SignInBloc, SignInState>(
-                    builder: (context, state) {
+                  Builder(
+                    builder: (context) {
+                      final termsAccepted = context.select<SignInBloc, bool>(
+                          (bloc) => bloc.state.termsAccepted);
+
                       return CheckboxListTile(
-                          value: bloc.state.termsAccepted,
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (checked) => bloc.add(
-                                SignInEvent.termsAccepted(
-                                  checked ?? false,
-                                ),
-                              ),
-                          title: const Text("Are you ok with the terms?"));
+                        value: termsAccepted,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (checked) => bloc.add(
+                          SignInEvent.termsAccepted(
+                            checked ?? false,
+                          ),
+                        ),
+                        title: const Text("Are you ok with the terms?"),
+                      );
                     },
                   ),
                   const ElevatedButton(

@@ -8,8 +8,8 @@ import '../../../../domain/models/ws_status/ws_status.dart';
 import '../../../../domain/repositories/exchange_repository.dart';
 import '../../../../domain/repositories/ws_repository.dart';
 
-part 'extensions/ws.dart';
 part 'extensions/update_crypto_prices.dart';
+part 'extensions/ws.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(
@@ -26,6 +26,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     'bitcoin',
     'ethereum',
     'tether',
+    'eos',
     'binance-coin',
     'usd-coin',
     'monero',
@@ -36,7 +37,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final WsRepository _wsRepository;
 
   StreamSubscription? _pricesSubscription, _wsSubscription;
-
 
   final ExchangeRepository exchangeRepository;
 

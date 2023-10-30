@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:functional_programming/app/domain/failures/http_request_failure.dart';
 import 'package:functional_programming/app/domain/models/crypto/crypto.dart';
-import 'package:functional_programming/app/domain/repositories/exchange_repository.dart';
+import 'package:functional_programming/app/domain/typedefs.dart';
 import 'package:http/http.dart';
 
 import '../../../domain/either/either.dart';
@@ -13,7 +13,7 @@ class ExchangeAPI {
 
   ExchangeAPI(this._client);
 
-  GetPriceFuture getPrices(List<String> ids) async {
+  HttpFuture getPrices(List<String> ids) async {
     try {
       final response = await _client.get(
         Uri.parse(
