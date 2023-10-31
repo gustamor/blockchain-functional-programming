@@ -8,5 +8,7 @@ class SignInState with _$SignInState {
     @Default('') String email,
     @Default('') String password,
     @Default(false) bool termsAccepted,
+    @Default(false) bool fetching,
+
   }) = _SignInState;
 }

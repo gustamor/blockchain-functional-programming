@@ -9,4 +9,6 @@ class SignInEvent with _$SignInEvent {
       SignInPasswordChangedEvent;
   factory SignInEvent.termsAccepted(bool termsAccepted) =
       SignInTermsChangedEvent;
+      factory SignInEvent.fetching(bool value) =
+      SignInFetchingEvent;
 }

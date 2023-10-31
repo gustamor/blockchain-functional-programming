@@ -36,15 +36,28 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         ),
       ),
     );
+    on<SignInFetchingEvent>(
+      (event, emit) => state.copyWith(
+        fetching: event.value,
+      ),
+    );
   }
 
   final AuthRepository _authRepository;
   final SessionBloc _sessionBloc;
 
   HttpFuture<User> signIn() async {
+    add(
+      SignInEvent.fetching(true),
+    );
+
     final result = await _authRepository.signIn(
       state.email,
       state.password,
+    );
+    
+    add(
+      SignInEvent.fetching(false),
     );
 
     result.whenOrNull(
