@@ -4,6 +4,7 @@ import 'package:functional_programming/app/presentation/modules/home/bloc/home_b
 import 'package:provider/provider.dart';
 
 import '../../../global/blocs/session/session_bloc.dart';
+import '../../../global/cubits/dark_mode/dark_mode_cubit.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -14,24 +15,31 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     final SessionBloc sessionBloc = context.watch<SessionBloc>();
     final isSignedIn = sessionBloc.state.user != null;
     return AppBar(
-      leading: IconButton(
-        onPressed: () {
-          if (isSignedIn) {
-            sessionBloc.add(SessionEvent.signOut());
-          } else {
-            Navigator.pushReplacementNamed(context, '/sign-in');
-          }
-      },
-        icon:  Icon(isSignedIn ? Icons.person : Icons.login),
-      ),
-      title: homeBloc.state.mapOrNull(
+        leading: IconButton(
+          onPressed: () {
+            if (isSignedIn) {
+              sessionBloc.add(SessionEvent.signOut());
+            } else {
+              Navigator.pushReplacementNamed(context, '/sign-in');
+            }
+          },
+          icon: Icon(isSignedIn ? Icons.person : Icons.login),
+        ),
+        title: homeBloc.state.mapOrNull(
           loaded: (state) => Center(
-                child: Text(state.wsStatus.when(
-                    connecting: () => 'connecting',
-                    connected: () => 'connected',
-                    failed: () => 'failed')),
-              )),
-    );
+            child: Text(
+              state.wsStatus.when(
+                  connecting: () => 'connecting',
+                  connected: () => 'connected',
+                  failed: () => 'failed'),
+            ),
+          ),
+        ),
+        actions: [
+          Switch(
+              value: Theme.of(context).brightness == Brightness.dark,
+              onChanged: context.read<DarkModeCubit>().updateDarkMode)
+        ]);
   }
 
   @override
