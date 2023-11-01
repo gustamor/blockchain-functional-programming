@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:functional_programming/app/domain/repositories/auth_repository.dart';
 import 'package:functional_programming/app/presentation/modules/global/blocs/session/session_events.dart';
 import 'package:functional_programming/app/presentation/modules/global/blocs/session/session_state.dart';
 

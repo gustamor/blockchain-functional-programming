@@ -9,7 +9,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class WsRepositoryImpl implements WsRepository {
   WsRepositoryImpl(this.builder);
 
-  final Duration _reconnectDuration = Duration(seconds: 5);
+  final Duration _reconnectDuration = const Duration(seconds: 5);
 
   final WebSocketChannel Function(List<String>) builder;
   WebSocketChannel? _channel;
@@ -23,33 +23,31 @@ class WsRepositoryImpl implements WsRepository {
   @override
   Future<bool> connect(List<String> ids) async {
     try {
-      _notifyStatus(WsStatus.connecting(),);
+      _notifyStatus(
+        const WsStatus.connecting(),
+      );
       _channel = builder(ids);
       await _channel!.ready;
-      _subscription = _channel!.stream.listen(
-          (event) {
-            final map = Map<String, String>.from(
-              jsonDecode(event),
-            );
-            final data = <String, double>{}
-              ..addEntries(
-                map.entries.map(
-                      (e) =>
-                      MapEntry(
-                        e.key,
-                        double.parse(e.value),
-                      ),
-                ),
-              );
+      _subscription = _channel!.stream.listen((event) {
+        final map = Map<String, String>.from(
+          jsonDecode(event),
+        );
+        final data = <String, double>{}..addEntries(
+            map.entries.map(
+              (e) => MapEntry(
+                e.key,
+                double.parse(e.value),
+              ),
+            ),
+          );
 
-            if (_pricesController?.hasListener ?? false) {
-              _pricesController!.add(data);
-            }
-          },
-          onDone: () => _reconnected(ids)
-
+        if (_pricesController?.hasListener ?? false) {
+          _pricesController!.add(data);
+        }
+      }, onDone: () => _reconnected(ids));
+      _notifyStatus(
+        const WsStatus.connected(),
       );
-      _notifyStatus(WsStatus.connected(),);
       return true;
     } catch (e) {
       if (kDebugMode) {
@@ -62,8 +60,7 @@ class WsRepositoryImpl implements WsRepository {
 
   void _reconnected(List<String> ids) {
     if (_subscription != null) {
-      _timer = Timer(
-          _reconnectDuration, () {
+      _timer = Timer(_reconnectDuration, () {
         connect(ids);
       });
     }
@@ -102,4 +99,3 @@ class WsRepositoryImpl implements WsRepository {
     return _wsController!.stream;
   }
 }
-

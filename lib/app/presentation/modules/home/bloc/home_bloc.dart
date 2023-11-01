@@ -26,12 +26,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     'bitcoin',
     'ethereum',
     'tether',
-    'eos',
     'binance-coin',
     'usd-coin',
     'monero',
     'litecoin',
-    'tomochain',
+    'eos',
   ];
 
   final WsRepository _wsRepository;

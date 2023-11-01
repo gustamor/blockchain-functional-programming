@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:functional_programming/app/domain/failures/http_request_failure.dart';
 import 'package:functional_programming/app/presentation/modules/home/bloc/home_bloc.dart';
 import 'package:provider/provider.dart';
 

@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:functional_programming/app/presentation/modules/sign_in/bloc/sign_in_bloc.dart';
 import 'package:functional_programming/app/presentation/modules/sign_in/bloc/sign_in_event.dart';
 import 'package:functional_programming/app/presentation/modules/sign_in/bloc/sign_in_state.dart';
+
+part 'utils/utils.dart';
+part 'widgets/submit_button.dart';
 
 class SignInView extends StatelessWidget {
   const SignInView({super.key});
@@ -22,7 +26,7 @@ class SignInView extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: BlocBuilder<SignInBloc, SignInState>(
               buildWhen: (prev, current) => prev.fetching != current.fetching,
-              builder: (context, state) {
+              builder: (mContext, state) {
                 return AbsorbPointer(
                   absorbing: state.fetching,
                   child: Form(
@@ -30,29 +34,27 @@ class SignInView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextFormField(
-                          decoration: const InputDecoration(
-                            label: Text('Email'),
-                          ),
-                          onChanged: (text) => bloc.add(
-                            SignInEvent.emailChanged(
-                              text.trim(),
+                            decoration: const InputDecoration(
+                              label: Text('Email'),
                             ),
-                          ),
-                          validator: (text) => emailValidator(text??'')
-
-                        ),
+                            onChanged: (text) => bloc.add(
+                                  SignInEvent.emailChanged(
+                                    text.trim(),
+                                  ),
+                                ),
+                            validator: (text) => _emailValidator(text ?? '')),
                         const SizedBox(height: 16),
                         TextFormField(
-                          decoration: const InputDecoration(
-                            label: Text('Password'),
-                          ),
-                          onChanged: (text) => bloc.add(
-                            SignInEvent.passwordChanged(
-                              text.trim(),
+                            decoration: const InputDecoration(
+                              label: Text('Password'),
                             ),
-                          ),
-                          validator: (text) => passwordValidator(text??'')
-                        ),
+                            onChanged: (text) => bloc.add(
+                                  SignInEvent.passwordChanged(
+                                    text.trim(),
+                                  ),
+                                ),
+                            validator: (text) =>
+                                _passwordValidator(text ?? '')),
                         const SizedBox(height: 16),
                         Builder(
                           builder: (context) {
@@ -76,18 +78,9 @@ class SignInView extends StatelessWidget {
                             ? const Center(
                                 child: CircularProgressIndicator(),
                               )
-                            : Builder(
-                              builder: (mContext) {
-                                final state = context.watch<SignInBloc>().state;
-                                final enabled = state.termsAccepted &&
-                                    emailValidator(state.email)   &&
-                                   passwordValidator(state.password);
-                                return  ElevatedButton(
-                                    onPressed: enabled ? () => _submit(context) : null,
-                                    child: Text("Sign in"),
-                                  );
-                              },
-                            ),
+                            : SignInSubmitButton(
+                                onSubmitted: () => _submit(context),
+                              )
                       ],
                     ),
                   ),
@@ -99,43 +92,4 @@ class SignInView extends StatelessWidget {
       }),
     );
   }
-
-}
-
-
-
-emailValidator(String text) {
-  text = text?.trim() ?? '';
-  if (text.contains('@')) {
-    return null;
-  } else {
-    return 'Invalid email';
-  }
-
-}
-passwordValidator(String text) {
-  text = text?.trim() ?? '';
-  if (text.isEmpty) {
-    return 'Invalid Password';
-  } else {
-    return null;
-  }
-}
-
- Future<void> _submit(BuildContext context)async{
- final SignInBloc bloc = context.read();
- final result = await bloc.signIn();
- if (context.mounted) {
-   result.when(left: (failure) => {
-     ScaffoldMessenger.of(context).showSnackBar(
-       SnackBar(content: Text(failure.toString(),),)
-     )
-   }, right: (user) =>
-   {
-     Navigator.pushReplacementNamed(context, '/'),
-   },);
- } else {
-   print('Deactivated widget');
- }
-
 }
